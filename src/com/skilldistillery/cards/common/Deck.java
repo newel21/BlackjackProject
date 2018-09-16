@@ -33,4 +33,13 @@ public class Deck {
     return cards.remove(0);
   }
   
+  // create a list of the first 4 cards
+  public List<Card> getInitialCards() {
+	  List<Card> initialCards = new ArrayList<>();
+	  for (int i = 0; i <= 3; i++) {
+		 initialCards.addAll(cards);;
+	  }
+	return initialCards;
+  }
+  
 }
