@@ -103,41 +103,33 @@ public class BlackJackApp {
 		}
 	}
 		
-	// 8. Setting dealer's threshold to 17
-	int dealerFinalValue = 0;
-	private boolean exceedThreshold() {
-		for (Card card : dealerCards) {
-			dealerFinalValue += card.getValue();	
-			
-		}
-		if (dealerFinalValue > 17) {
-			return true;
-		}
-		else {
-			return false;
-		}
-	}
-	
-	// 9. Dealer draw card(s) from the deck once player selects STAY until
+	// 8. Dealer draw card(s) from the deck once player selects STAY until
 	// dealer's final value reaches 17 or more. 
+	int dealerFinalValue = 0;
 	private void processDealerTurn() {
-		Card newCard = deck.dealCard();
-		System.out.println("Dealer added: " + newCard);
-		dealerCards.add(newCard);
-		if (exceedThreshold()) {
-			System.out.println("Exceeded Threshold!");
-			System.out.println("Calculating Final Scores.");
+		for (Card card : dealerCards) {
+			dealerFinalValue += card.getValue();
+		}
+		if (dealerFinalValue >= 17) {
+			System.out.println("Exceeded Threshold. Calculating Final Scores...");
+			System.out.println("*********************************");
 			compareValue();
 		}
 		else {
+			Card newCard = deck.dealCard();
+			System.out.println("Dealer added: " + newCard);
+			dealerCards.add(newCard);
+			//System.out.println(dealerFinalValue);
 			processDealerTurn();
 		}
 	}
 		
-	// 10. Check if dealer's final score is more than 21, then dealer lose
+	// 9. Check if dealer's final score is more than 21, then dealer lose
 	private void compareValue() {
+		System.out.println("Player's final cards: " + playerCards);
 		System.out.println("Player's final score: " + playerFinalValue);
-		System.out.println("Dealer's final score: " + dealerFinalValue);
+		System.out.println("Dealer's final cards: " + dealerCards);
+		System.out.println("Dealer's Final score: " + dealerFinalValue);
 		if (dealerFinalValue <= 21 && dealerFinalValue > playerFinalValue) {
 			System.out.println("DEALER WINS!!!");
 		}
