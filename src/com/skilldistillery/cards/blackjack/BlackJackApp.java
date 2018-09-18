@@ -12,6 +12,8 @@ public class BlackJackApp {
 	private List<Card> initialCards;
 	private List<Card> playerCards = new ArrayList<>();
 	private List<Card> dealerCards = new ArrayList<>();
+	int playerFinalValue = 0;
+	int dealerFinalValue = 0;
 	
 	public static void main(String[] args) {
 		BlackJackApp play = new BlackJackApp();
@@ -25,16 +27,16 @@ public class BlackJackApp {
 
 	// 1. Shuffle the deck of cards
 	private void shuffleCards() {	
-		deck.shuffle();				
+		this.deck.shuffle();				
 	}
 
 	// 2. Deal initial 4 cards from the deck
 	private void dealInitialCards() {
 		initialCards = deck.getInitialCards();
-		dealerCards.add(initialCards.get(0));
-		dealerCards.add(initialCards.get(1));
-		playerCards.add(initialCards.get(2));
-		playerCards.add(initialCards.get(3));
+		dealerCards.add(deck.dealCard());
+		dealerCards.add(deck.dealCard());
+		playerCards.add(deck.dealCard());
+		playerCards.add(deck.dealCard());
 		
 	}
 	// 3. Give the first 2 cards to the dealer, then print ONLY the 
@@ -47,7 +49,7 @@ public class BlackJackApp {
 	// 4. Give the other 2 cards to the player, then print the value
 	//	of both cards to the console
 	private void giveTwoCardstoPlayer() {
-		System.out.println("*********************************");
+		System.out.println("************************************************");
 		System.out.println("Player Card 1: " + playerCards.get(0));
 		System.out.println("Player Card 2: " + playerCards.get(1));					
 	}
@@ -55,7 +57,7 @@ public class BlackJackApp {
 	// 5. The user is prompted an option to HIT or STAY
 	private void hitOrStay() {
 		Scanner sc = new Scanner(System.in);
-		System.out.println("*********************************");
+		System.out.println("************************************************");
 		System.out.println("Do you want to HIT or STAY? (H/S)");
 			switch (sc.nextLine()) {
 				case "H":
@@ -70,6 +72,29 @@ public class BlackJackApp {
 				case "Stay":
 				case "stay":
 					processStay();
+					Scanner sc2 = new Scanner(System.in);
+					System.out.println();
+					System.out.println("Do you want to play again? (Y/N)");
+						switch (sc2.nextLine()) {
+						case "Y":
+						case "y":
+							playerCards.removeAll(playerCards);
+							dealerCards.removeAll(dealerCards);
+							playerFinalValue = 0;
+							dealerFinalValue = 0;
+							deck = new Deck();
+							shuffleCards();
+							dealInitialCards();
+							giveTwoCardsToDealer();
+							giveTwoCardstoPlayer();
+							hitOrStay();
+							break;
+						case "N":
+						case "n":
+							System.out.println("Hope you had fun. Goodbye!");
+							break;
+						default: System.out.println("Invalid Input");
+						}
 					break;
 				default: System.out.println("Invalid Input!");
 					hitOrStay();
@@ -86,7 +111,6 @@ public class BlackJackApp {
 		
 	// 7. When the user selects STAY, calculate the final value of player's cards.
 	// if final value exceeds 21, player BUSTS! else, dealer has to open secret card.
-	int playerFinalValue = 0;
 	private void processStay() {
 		for (Card card : playerCards) {
 			playerFinalValue += card.getValue();
@@ -105,37 +129,42 @@ public class BlackJackApp {
 		
 	// 8. Dealer draw card(s) from the deck once player selects STAY until
 	// dealer's final value reaches 17 or more. 
-	int dealerFinalValue = 0;
 	private void processDealerTurn() {
 		for (Card card : dealerCards) {
 			dealerFinalValue += card.getValue();
 		}
 		if (dealerFinalValue >= 17) {
 			System.out.println("Exceeded Threshold. Calculating Final Scores...");
-			System.out.println("*********************************");
+			System.out.println("************************************************");
 			compareValue();
 		}
 		else {
 			Card newCard = deck.dealCard();
 			System.out.println("Dealer added: " + newCard);
 			dealerCards.add(newCard);
-			//System.out.println(dealerFinalValue);
+			dealerFinalValue = 0;
 			processDealerTurn();
 		}
 	}
 		
 	// 9. Check if dealer's final score is more than 21, then dealer lose
 	private void compareValue() {
-		System.out.println("Player's final cards: " + playerCards);
+		System.out.println("Player's final hand: " + playerCards);
 		System.out.println("Player's final score: " + playerFinalValue);
-		System.out.println("Dealer's final cards: " + dealerCards);
+		System.out.println("Dealer's final hand: " + dealerCards);
 		System.out.println("Dealer's Final score: " + dealerFinalValue);
 		if (dealerFinalValue <= 21 && dealerFinalValue > playerFinalValue) {
 			System.out.println("DEALER WINS!!!");
 		}
-		else {
+		else if ( dealerFinalValue == playerFinalValue ){
+			System.out.println("IT's A DRAW!");
+		}
+		else if (dealerFinalValue > 21) {
 			System.out.println("DEALER BUSTS!");
 			System.out.println("PLAYER WINS!!!");
+		}
+		else {
+			System.out.println("PLAYER WINS!");
 		}
 	}
 	
